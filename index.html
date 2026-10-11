@@ -1,0 +1,357 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>JOYIN PAY</title>
+    <meta name="theme-color" content="#000000" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <svg width="0" height="0" style="position: absolute">
+      <defs>
+        <symbol id="i-copy" viewBox="0 0 24 24">
+          <rect x="9" y="9" width="11" height="11" rx="2" />
+          <path d="M5 15V6a2 2 0 0 1 2-2h8" />
+        </symbol>
+        <symbol id="i-send" viewBox="0 0 24 24">
+          <path d="M22 2 11 13" />
+          <path d="M22 2 15 22l-4-9-9-4z" />
+        </symbol>
+        <symbol id="i-history" viewBox="0 0 24 24">
+          <path d="M3 12a9 9 0 1 0 3-6.7L3 8" />
+          <path d="M3 3v5h5" />
+          <path d="M12 7v5l3 2" />
+        </symbol>
+        <symbol id="i-eye" viewBox="0 0 24 24">
+          <path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z" />
+          <circle cx="12" cy="12" r="3" />
+        </symbol>
+        <symbol id="i-eyeoff" viewBox="0 0 24 24">
+          <path d="M3 3l18 18" />
+          <path
+            d="M10.6 6.1A9.7 9.7 0 0 1 12 6c6 0 10 6 10 6a17 17 0 0 1-3.2 3.8M6.5 7.6C3.9 9.4 2 12 2 12s4 7 10 7c1.6 0 3-.4 4.3-1"
+          />
+        </symbol>
+        <symbol id="i-check" viewBox="0 0 24 24">
+          <path d="M20 6 9 17l-5-5" />
+        </symbol>
+        <symbol id="i-x" viewBox="0 0 24 24">
+          <path d="M18 6 6 18M6 6l12 12" />
+        </symbol>
+        <symbol id="i-search" viewBox="0 0 24 24">
+          <circle cx="11" cy="11" r="7" />
+          <path d="m21 21-4.3-4.3" />
+        </symbol>
+        <symbol id="i-lock" viewBox="0 0 24 24">
+          <rect x="4" y="11" width="16" height="10" rx="2" />
+          <path d="M8 11V7a4 4 0 0 1 8 0v4" />
+        </symbol>
+        <symbol id="i-mail" viewBox="0 0 24 24">
+          <rect x="3" y="5" width="18" height="14" rx="2" />
+          <path d="m3 7 9 6 9-6" />
+        </symbol>
+        <symbol id="i-user" viewBox="0 0 24 24">
+          <circle cx="12" cy="8" r="4" />
+          <path d="M4 21c0-4 4-6 8-6s8 2 8 6" />
+        </symbol>
+        <symbol id="i-phone" viewBox="0 0 24 24">
+          <path
+            d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"
+          />
+        </symbol>
+        <symbol id="i-out" viewBox="0 0 24 24">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+          <path d="m16 17 5-5-5-5M21 12H9" />
+        </symbol>
+        <symbol id="i-up" viewBox="0 0 24 24">
+          <path d="M7 17 17 7M8 7h9v9" />
+        </symbol>
+        <symbol id="i-down" viewBox="0 0 24 24">
+          <path d="M17 7 7 17M16 17H7V8" />
+        </symbol>
+        <symbol id="i-alert" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="9" />
+          <path d="M12 8v5M12 16h.01" />
+        </symbol>
+      </defs>
+    </svg>
+
+    <div id="loader" class="loader show">
+      <div class="spin"></div>
+      <p id="loaderText">Loading JOYIN PAY</p>
+    </div>
+    <div id="toasts"></div>
+
+    <!-- AUTH -->
+    <main id="authView" class="auth hide">
+      <div class="brand"><span class="logo">JP</span><b>JOYIN PAY</b></div>
+      <div class="card authcard">
+        <div class="tabs">
+          <button id="tabLogin" class="on">Log in</button
+          ><button id="tabSignup">Sign up</button>
+        </div>
+
+        <form id="loginForm" novalidate>
+          <h1>Welcome back</h1>
+          <p class="sub">Log in to manage your money.</p>
+          <label class="f"
+            ><svg class="i"><use href="#i-mail" /></svg
+            ><input
+              id="lEmail"
+              type="email"
+              placeholder="Email address"
+              autocomplete="email"
+          /></label>
+          <label class="f"
+            ><svg class="i"><use href="#i-lock" /></svg
+            ><input
+              id="lPass"
+              type="password"
+              placeholder="Password"
+              autocomplete="current-password" /><button
+              type="button"
+              class="eye"
+              data-eye="lPass"
+            >
+              <svg class="i"><use href="#i-eye" /></svg></button
+          ></label>
+          <div class="msg" id="lMsg"></div>
+          <button class="btn" id="lBtn">Log in</button>
+        </form>
+
+        <form id="signupForm" class="hide" novalidate>
+          <h1>Create your account</h1>
+          <p class="sub">Your account number is generated instantly.</p>
+          <label class="f"
+            ><svg class="i"><use href="#i-user" /></svg
+            ><input id="sName" placeholder="Full name" autocomplete="name"
+          /></label>
+          <label class="f"
+            ><svg class="i"><use href="#i-mail" /></svg
+            ><input
+              id="sEmail"
+              type="email"
+              placeholder="Email address"
+              autocomplete="email"
+          /></label>
+          <label class="f"
+            ><svg class="i"><use href="#i-phone" /></svg
+            ><input
+              id="sPhone"
+              type="tel"
+              placeholder="Phone number"
+              autocomplete="tel"
+          /></label>
+          <label class="f"
+            ><svg class="i"><use href="#i-lock" /></svg
+            ><input
+              id="sPass"
+              type="password"
+              placeholder="Password (8+ chars, letters and numbers)"
+              autocomplete="new-password" /><button
+              type="button"
+              class="eye"
+              data-eye="sPass"
+            >
+              <svg class="i"><use href="#i-eye" /></svg></button
+          ></label>
+          <div class="row2">
+            <label class="f"
+              ><svg class="i"><use href="#i-lock" /></svg
+              ><input
+                id="sPin"
+                type="password"
+                inputmode="numeric"
+                maxlength="4"
+                placeholder="4-digit PIN"
+            /></label>
+            <label class="f"
+              ><svg class="i"><use href="#i-lock" /></svg
+              ><input
+                id="sPin2"
+                type="password"
+                inputmode="numeric"
+                maxlength="4"
+                placeholder="Confirm PIN"
+            /></label>
+          </div>
+          <div class="msg" id="sMsg"></div>
+          <button class="btn" id="sBtn">Create account</button>
+        </form>
+      </div>
+    </main>
+
+    <!-- DASHBOARD -->
+    <main id="dashView" class="dash hide">
+      <header>
+        <div class="brand"><span class="logo">JP</span><b>JOYIN PAY</b></div>
+        <button class="ghost" id="logoutBtn">
+          <svg class="i"><use href="#i-out" /></svg><span>Log out</span>
+        </button>
+      </header>
+      <h2 id="hi" class="hi"></h2>
+      <section class="bal">
+        <div class="balTop">
+          <span>Main balance</span
+          ><button class="eye" id="balEye" aria-label="Toggle balance">
+            <svg class="i"><use href="#i-eye" /></svg>
+          </button>
+        </div>
+        <div class="amt" id="balance">&#8358;0.00</div>
+        <div class="acct">
+          <span>Account number</span><b id="acctNo">----------</b>
+          <button class="copy" id="copyAcct" aria-label="Copy account number">
+            <svg class="i"><use href="#i-copy" /></svg>
+          </button>
+        </div>
+      </section>
+      <div class="actions">
+        <button class="act" id="openTransfer">
+          <span
+            ><svg class="i"><use href="#i-send" /></svg></span
+          >Transfer
+        </button>
+        <button class="act" id="openHistory">
+          <span
+            ><svg class="i"><use href="#i-history" /></svg></span
+          >History
+        </button>
+      </div>
+    </main>
+
+    <!-- TRANSFER MODAL -->
+    <div class="modal" id="mTransfer">
+      <div class="sheet">
+        <div class="mh">
+          <h3>Transfer money</h3>
+          <button class="x" data-close="mTransfer" aria-label="Close">
+            <svg class="i"><use href="#i-x" /></svg>
+          </button>
+        </div>
+        <div id="t1">
+          <p class="sub">Enter the recipient's 10-digit account number.</p>
+          <div class="inline">
+            <label class="f"
+              ><svg class="i"><use href="#i-search" /></svg
+              ><input
+                id="tAcct"
+                inputmode="numeric"
+                maxlength="10"
+                placeholder="Account number" /></label
+            ><button class="btn sm" id="tSearch">Search</button>
+          </div>
+          <div class="msg" id="t1Msg"></div>
+        </div>
+        <div id="t2" class="hide">
+          <div class="who">
+            <span class="av" id="tAv"></span>
+            <div><b id="tName"></b><small id="tNo"></small></div>
+          </div>
+          <label class="f amtf"
+            ><span>&#8358;</span
+            ><input id="tAmt" inputmode="decimal" placeholder="0.00"
+          /></label>
+          <small class="avail" id="tAvail"></small>
+          <div class="msg" id="t2Msg"></div>
+          <div class="two">
+            <button class="btn alt" id="tBack">Back</button
+            ><button class="btn" id="tNext">Continue</button>
+          </div>
+        </div>
+        <div id="t3" class="hide">
+          <p class="sub" id="tSum"></p>
+          <label class="f"
+            ><svg class="i"><use href="#i-lock" /></svg
+            ><input
+              id="tPin"
+              type="password"
+              inputmode="numeric"
+              maxlength="4"
+              placeholder="Enter your 4-digit PIN"
+          /></label>
+          <div class="msg" id="t3Msg"></div>
+          <div class="two">
+            <button class="btn alt" id="tBack2">Back</button
+            ><button class="btn" id="tSend">Send money</button>
+          </div>
+        </div>
+        <div id="t4" class="hide done">
+          <span class="okc"
+            ><svg class="i"><use href="#i-check" /></svg
+          ></span>
+          <h3>Transfer successful</h3>
+          <p class="sub" id="tDone"></p>
+          <button class="btn" data-close="mTransfer">Done</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- HISTORY MODAL -->
+    <div class="modal" id="mHistory">
+      <div class="sheet tall">
+        <div class="mh">
+          <h3>Transaction history</h3>
+          <button class="x" data-close="mHistory" aria-label="Close">
+            <svg class="i"><use href="#i-x" /></svg>
+          </button>
+        </div>
+        <div id="hList" class="hlist"></div>
+        <button class="btn alt hide" id="hMore">Load more</button>
+      </div>
+    </div>
+
+    <!-- COMPLETE ACCOUNT MODAL -->
+    <div class="modal" id="mComplete">
+      <div class="sheet">
+        <div class="mh"><h3>Complete your account</h3></div>
+        <p class="sub">
+          Your account setup isn't finished. Fill in the details below to
+          continue.
+        </p>
+        <form id="cForm" novalidate>
+          <label class="f"
+            ><svg class="i"><use href="#i-user" /></svg
+            ><input id="cName" placeholder="Full name"
+          /></label>
+          <label class="f"
+            ><svg class="i"><use href="#i-phone" /></svg
+            ><input id="cPhone" type="tel" placeholder="Phone number"
+          /></label>
+          <div class="row2">
+            <label class="f"
+              ><svg class="i"><use href="#i-lock" /></svg
+              ><input
+                id="cPin"
+                type="password"
+                inputmode="numeric"
+                maxlength="4"
+                placeholder="4-digit PIN"
+            /></label>
+            <label class="f"
+              ><svg class="i"><use href="#i-lock" /></svg
+              ><input
+                id="cPin2"
+                type="password"
+                inputmode="numeric"
+                maxlength="4"
+                placeholder="Confirm PIN"
+            /></label>
+          </div>
+          <div class="msg" id="cMsg"></div>
+          <div class="two">
+            <button type="button" class="btn alt" id="cOut">Log out</button
+            ><button class="btn" id="cBtn">Finish setup</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <script type="module" src="js/app.js"></script>
+  </body>
+</html>

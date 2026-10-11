@@ -1,0 +1,103 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null; }
+    function owner(u) { return signedIn() && request.auth.uid == u; }
+    function wNow(u)   { return get(/databases/$(database)/documents/users/$(u)/private/wallet).data; }
+    function wAfter(u) { return getAfter(/databases/$(database)/documents/users/$(u)/private/wallet).data; }
+    function acct(n)   { return get(/databases/$(database)/documents/accountNumbers/$(n)).data; }
+    function tx(id)    { return getAfter(/databases/$(database)/documents/transfers/$(id)).data; }
+    // true only when the transfer does not exist yet, i.e. it is being created in THIS write
+    function fresh(id) { return !exists(/databases/$(database)/documents/transfers/$(id)); }
+
+    // Account number lookup: GET only, one number per user, created together with the profile.
+    match /accountNumbers/{no} {
+      allow get: if signedIn();
+      allow list, update, delete: if false;
+      allow create: if signedIn() && no.matches('[0-9]{10}')
+        && !exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && getAfter(/databases/$(database)/documents/users/$(request.auth.uid)).data.accountNumber == no
+        && request.resource.data.keys().hasOnly(['uid', 'name'])
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.name is string && request.resource.data.name.size() <= 80;
+    }
+
+    // Immutable ledger. A transfer is only valid if, in the same commit, the sender wallet
+    // is debited by exactly the amount AND is linked (lastTx) to this very transfer.
+    match /transfers/{id} {
+      allow read: if signedIn() && request.auth.uid in [resource.data.from, resource.data.to];
+      allow update, delete: if false;
+      allow create: if signedIn()
+        && request.resource.data.keys().hasOnly(['from', 'to', 'amount', 'fromName', 'toName', 'fromAcct', 'toAcct', 'createdAt'])
+        && request.resource.data.from == request.auth.uid
+        && request.resource.data.to is string && request.resource.data.to != request.auth.uid
+        && request.resource.data.amount is int
+        && request.resource.data.amount >= 100 && request.resource.data.amount <= 100000000000
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.fromAcct is string && request.resource.data.toAcct is string
+        && acct(request.resource.data.fromAcct).uid == request.auth.uid
+        && acct(request.resource.data.fromAcct).name == request.resource.data.fromName
+        && acct(request.resource.data.toAcct).uid == request.resource.data.to
+        && acct(request.resource.data.toAcct).name == request.resource.data.toName
+        && wAfter(request.auth.uid).lastTx == id
+        && wAfter(request.auth.uid).balance == wNow(request.auth.uid).balance - request.resource.data.amount;
+    }
+
+    match /users/{uid} {
+      allow read: if owner(uid);
+      allow delete: if false;
+      allow create: if owner(uid)
+        && request.resource.data.keys().hasOnly(['fullName', 'email', 'phone', 'accountNumber', 'createdAt'])
+        && request.resource.data.accountNumber.matches('[0-9]{10}')
+        && getAfter(/databases/$(database)/documents/accountNumbers/$(request.resource.data.accountNumber)).data.uid == uid
+        && getAfter(/databases/$(database)/documents/accountNumbers/$(request.resource.data.accountNumber)).data.name == request.resource.data.fullName;
+      // name is locked (it is mirrored in the public lookup index); only phone may change
+      allow update: if owner(uid)
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['phone']);
+
+      match /private/wallet {
+        allow read: if owner(uid);
+        allow delete: if false;
+        allow create: if owner(uid)
+          && request.resource.data.keys().hasOnly(['balance', 'pinHash', 'salt'])
+          && request.resource.data.balance == 0
+          && request.resource.data.pinHash is string && request.resource.data.salt is string;
+        allow update: if signedIn()
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['balance', 'lastTx'])
+          && request.resource.data.lastTx is string
+          && fresh(request.resource.data.lastTx)               // each transfer can move money exactly once
+          && wAfter(uid).balance is int && wAfter(uid).balance >= 0
+          && (
+            // debit: owner, own transfer, final balance = before - amount
+            (owner(uid)
+              && tx(request.resource.data.lastTx).from == uid
+              && wAfter(uid).balance == resource.data.balance - tx(request.resource.data.lastTx).amount)
+            ||
+            // credit: only the sender of this brand-new transfer, final balance = before + amount
+            (!owner(uid)
+              && tx(request.resource.data.lastTx).to == uid
+              && tx(request.resource.data.lastTx).from == request.auth.uid
+              && wAfter(uid).balance == resource.data.balance + tx(request.resource.data.lastTx).amount)
+          );
+      }
+
+      match /history/{id} {
+        allow read: if owner(uid);
+        allow update, delete: if false;
+        allow create: if signedIn() && fresh(id)
+          && request.auth.uid == tx(id).from
+          && request.resource.data.keys().hasOnly(['type', 'amount', 'name', 'acct', 'createdAt'])
+          && request.resource.data.amount == tx(id).amount
+          && request.resource.data.createdAt == request.time
+          && (
+            (uid == tx(id).from && request.resource.data.type == 'debit'
+              && request.resource.data.name == tx(id).toName && request.resource.data.acct == tx(id).toAcct)
+            ||
+            (uid == tx(id).to && request.resource.data.type == 'credit'
+              && request.resource.data.name == tx(id).fromName && request.resource.data.acct == tx(id).fromAcct)
+          );
+      }
+    }
+  }
+}
