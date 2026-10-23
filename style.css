@@ -53,4 +53,5 @@ button:focus-visible, textarea:focus-visible { outline: 3px solid var(--accent);
 .verdict.fail { border-color: var(--fail); }
 .verdict h2 { margin-top: 0; }
 label { display: block; font-size: .85rem; color: var(--muted); margin: 1rem 0 .25rem; }
+select { width: 100%; font: inherit; padding: .7rem; border: 1px solid var(--line); border-radius: 8px; background: var(--card); color: var(--text); }
 textarea { width: 100%; font: .8rem ui-monospace, Menlo, Consolas, monospace; padding: .6rem; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--text); resize: vertical; }

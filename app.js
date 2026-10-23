@@ -84,7 +84,8 @@ async function checkEnvironment() {
 async function runTest(env) {
   const steps = $("steps");
   steps.innerHTML = "";
-  const result = { created: false, enabled: false, got: false, stable: false, saltsDiffer: false, error: "" };
+  const mode = $("mode").value;
+  const result = { mode, created: false, enabled: false, got: false, stable: false, saltsDiffer: false, error: "" };
 
   // The salt is the "question". It is fixed in code and it is NOT secret.
   const salt1 = enc.encode("lcu-attendance-test-question-1");
@@ -106,11 +107,20 @@ async function runTest(env) {
           { type: "public-key", alg: -7 },
           { type: "public-key", alg: -257 },
         ],
-        authenticatorSelection: {
-          authenticatorAttachment: "platform",
-          residentKey: "preferred",
-          userVerification: "required",
-        },
+        authenticatorSelection:
+          mode === "device"
+            ? {
+                authenticatorAttachment: "platform",
+                residentKey: "discouraged",
+                requireResidentKey: false,
+                userVerification: "required",
+              }
+            : {
+                authenticatorAttachment: "platform",
+                residentKey: "preferred",
+                userVerification: "required",
+              },
+        ...(mode === "device" ? { hints: ["client-device"] } : {}),
         attestation: "none",
         timeout: 60000,
         extensions: { prf: {} },
@@ -214,6 +224,7 @@ function showVerdict({ result, env }) {
 
   const code = [
     "PRF=" + (pass ? "PASS" : "FAIL"),
+    "mode=" + result.mode,
     "created=" + result.created,
     "enabledFlag=" + result.enabled,
     "answered=" + result.got,
