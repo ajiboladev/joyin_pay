@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Phone fingerprint check</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main>
+    <h1>Does your phone support the attendance check?</h1>
+    <p class="lead">This takes about 30 seconds. You will be asked for your fingerprint, face, or phone PIN three times. Nothing is sent anywhere.</p>
+
+    <section aria-labelledby="env-h">
+      <h2 id="env-h">Your phone</h2>
+      <ul id="env" class="rows"></ul>
+    </section>
+
+    <button id="run" type="button">Start the test</button>
+
+    <section aria-labelledby="steps-h">
+      <h2 id="steps-h">Test steps</h2>
+      <ul id="steps" class="rows"><li class="row info"><span class="dot"></span><span>Waiting. Tap “Start the test”.</span></li></ul>
+    </section>
+
+    <section id="verdict" class="verdict" hidden aria-live="polite">
+      <h2 id="verdict-title"></h2>
+      <p id="verdict-text"></p>
+      <label for="summary">Result code (send this to the developer)</label>
+      <textarea id="summary" readonly rows="4"></textarea>
+      <button id="copy" type="button" class="secondary">Copy result</button>
+    </section>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>
